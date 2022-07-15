@@ -159,9 +159,10 @@ class PlayerService {
         questsMax: result.max_quests,
         cash: result.cash,
         rank: result.rank,
-        backpack: result.storage,
-        backpackMax: result.max_storage,
+        backpack: result.backpack,
+        backpackMax: result.max_backpack,
         fame: result.fame,
+        favor: result.favor,
         place: result.place,
         location: result.location,
       };
@@ -217,7 +218,7 @@ class PlayerService {
 
   async update(data) {
     const query =
-      "UPDATE players SET region = ?, class = ?, background = ?, alliance = ?, effects = ?, guts = ?, wits = ?, charm = ?, max_guts = ?, max_wits = ?, max_charm = ?, attack = ?, defend = ?, skill = ?, skill_fighter = ?, skill_fighter_max = ?, skill_magic = ?, skill_magic_max = ?, skill_trade = ?, skill_trade_max = ?, level = ?, experience = ?, quests = ?, max_quests = ?, cash = ?, rank = ?, storage = ?, max_storage = ?, fame = ?, favor = ?, skilled = ?, place = ?, location = ? WHERE owner = ?";
+      "UPDATE players SET region = ?, class = ?, background = ?, alliance = ?, effects = ?, guts = ?, wits = ?, charm = ?, max_guts = ?, max_wits = ?, max_charm = ?, attack = ?, defend = ?, skill = ?, skill_fighter = ?, skill_fighter_max = ?, skill_magic = ?, skill_magic_max = ?, skill_trade = ?, skill_trade_max = ?, level = ?, experience = ?, quests = ?, max_quests = ?, cash = ?, rank = ?, backpack = ?, max_backpack = ?, fame = ?, favor = ?, skilled = ?, place = ?, location = ?, favor = ? WHERE owner = ?";
     return await this.app.db.query(query, [
       data.region,
       data.class,
@@ -233,25 +234,26 @@ class PlayerService {
       data.stats.attack,
       data.stats.defend,
       data.stats.skill,
-      data.skill.fighter.skill,
-      data.skill.fighter.max,
-      data.skill.magic.skill,
-      data.skill.magic.max,
-      data.skill.trade.skill,
-      data.skill.trade.max,
+      data.skills.fighter.skill,
+      data.skills.fighter.max,
+      data.skills.magic.skill,
+      data.skills.magic.max,
+      data.skills.trade.skill,
+      data.skills.trade.max,
       data.level,
       data.experience,
       data.quests,
       data.questsMax,
       data.cash,
       data.rank,
-      data.storage,
-      data.storageMax,
+      data.backpack,
+      data.backpackMax,
       data.fame,
       data.favor,
       data.skilled,
       data.place,
       data.location,
+      data.favor,
       data.owner,
     ]);
   }

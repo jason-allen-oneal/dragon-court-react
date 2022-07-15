@@ -1,5 +1,7 @@
 .region {
   height: 100%;
+  padding: 0.8em;
+  font-size: 0.8em;
 }
 
 .castle {

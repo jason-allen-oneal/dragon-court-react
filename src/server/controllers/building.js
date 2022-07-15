@@ -3,9 +3,9 @@ class BuildingController {
 
   init(app, socket) {
     socket.on("shop-items-get", async (input) => {
-      const result = await app.services.item.getAll(input.type);
+      const result = await app.services.item.getAll(input.type, input.region);
 
-      socket.emit("sop-items-get-response", result);
+      socket.emit("shop-items-get-response", result);
     });
   }
 }

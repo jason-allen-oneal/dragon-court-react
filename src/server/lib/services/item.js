@@ -7,7 +7,7 @@ class ItemService {
     const query = "SELECT * FROM items WHERE id = ?";
     const results = await this.app.db.query(query, [id]);
 
-    return Promise.all(
+    const result = await Promise.all(
       results.map(async (result) => {
         const item = {
           id: result.id,
@@ -42,11 +42,13 @@ class ItemService {
         return item;
       })
     );
+
+    return result[0];
   }
 
-  async getAll(shop) {
-    const query = "SELECT * FROM items WHERE shop = ?";
-    const results = await this.app.db.query(query, [shop]);
+  async getAll(shop, region) {
+    const query = "SELECT * FROM items WHERE shop = ? AND region = ?";
+    const results = await this.app.db.query(query, [shop, region]);
 
     return Promise.all(
       results.map(async (result) => {

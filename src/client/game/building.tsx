@@ -67,11 +67,14 @@ export default class Building extends React.Component<Props, State> {
       ready: false,
     };
 
-    this.props.socket.emit("shop-get-items", { type: this.props.type });
+    this.props.socket.emit("shop-items-get", {
+      type: this.props.type,
+      region: this.state.Player.region,
+    });
   }
 
   componentDidMount(): void {
-    this.props.socket.on("shop-get-items-response", (data) => {
+    this.props.socket.on("shop-items-get-response", (data) => {
       this.setState({
         items: data,
         ready: true,

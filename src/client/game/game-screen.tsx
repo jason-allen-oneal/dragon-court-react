@@ -36,7 +36,7 @@ type State = {
 };
 
 class GameScreen extends React.Component<Props, State> {
-  inWelcome: boolean;
+  selectedItem: DC.InventoryItem | DC.Item | null;
 
   constructor(props: any) {
     super(props);
@@ -77,6 +77,8 @@ class GameScreen extends React.Component<Props, State> {
       selectedItem: null,
       inWelcome: true,
     };
+
+    this.selectedItem = null;
   }
 
   update() {
@@ -90,25 +92,25 @@ class GameScreen extends React.Component<Props, State> {
           template.modal(
             "shop-success",
             "Success!",
-            "You have purchased `" + this.state.selectedItem.name + "`."
+            "You have purchased `" + data.item + "`."
           );
         } else if (data.action === "sold") {
           template.modal(
             "shop-success",
             "Success!",
-            "You have sold `" + this.state.selectedItem.name + "`."
+            "You have sold `" + data.item + "`."
           );
         } else if (data.action === "equipped") {
           template.modal(
             "inventory-success",
             "Success!",
-            "You have equipped `" + this.state.selectedItem.name + "`."
+            "You have equipped `" + data.item + "`."
           );
         } else if (data.action === "identified") {
           template.modal(
             "shop-success",
             "Success!",
-            "You have identified `" + this.state.selectedItem.name + "`."
+            "You have identified `" + data.item + "`."
           );
         }
 
@@ -197,9 +199,13 @@ class GameScreen extends React.Component<Props, State> {
   }
 
   itemClick(item: DC.Item | DC.InventoryItem) {
+    this.selectedItem = item;
+
     this.setState({
       selectedItem: item,
     });
+
+    console.log("itemClick", this.selectedItem);
   }
 
   performTrade() {
@@ -223,6 +229,7 @@ class GameScreen extends React.Component<Props, State> {
 
         return false;
       } else {
+        console.log("performTrade this.selectedItem", this.selectedItem);
         this.props.socket.emit("player-buy-item", {
           player: this.state.Player,
           item: this.state.selectedItem.id,

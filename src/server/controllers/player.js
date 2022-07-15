@@ -23,13 +23,15 @@ class PlayerController {
     });
 
     socket.on("player-equip-item", async (input) => {
+      console.log("player-equip-item input", input);
       const p = input.player;
       const i = await app.services.inventory.getItem(input.item);
-
+      console.log("player-equip-item item", i);
       let status = "";
       let results;
 
       const result = await app.services.inventory.equip(p, i);
+      console.log(result);
       if (result === "ok") {
         status = "ok";
       } else {
@@ -49,34 +51,49 @@ class PlayerController {
 
     socket.on("player-buy-item", async (input) => {
       const p = input.player;
-      const i = await app.services.items.get(input.item);
-
+      const i = await app.services.item.get(input.item);
       let status = "";
+      let data = {};
 
-      p.cash = p.cash - i.cost;
-      p.cashToday = p.cashToday - i.cost;
-
-      const playerUpdate = await app.services.player.update(p);
-      if (playerUpdate.affectedRows) {
-        status = "ok";
-      } else {
+      if (p.backpack === p.backpackMax) {
         status = "error";
-        result = "Something went wrong.";
-      }
-      if (status === "ok") {
-        result = await app.services.inventory.add(i, p.id);
+        result = "You are carrying too much!";
+
+        data = {
+          status: status,
+          data: result,
+        };
+      } else {
+        p.cash = parseInt(p.cash - i.cost);
+        p.cashToday = parseInt(p.cashToday - i.cost);
+        let result = await app.services.inventory.add(i, p.id);
+        if (result.add) {
+          p.backpack = p.backpack + 1;
+        }
+
+        const playerUpdate = await app.services.player.update(p);
+        if (playerUpdate.affectedRows) {
+          status = "ok";
+          result = result.p;
+        } else {
+          status = "error";
+          result = "Something went wrong.";
+        }
+
+        data = {
+          status: status,
+          action: "purchased",
+          item: i.name,
+          data: result,
+        };
       }
 
-      socket.emit("player-update-response", {
-        status: status,
-        action: "purchased",
-        data: result,
-      });
+      socket.emit("player-update-response", data);
     });
 
     socket.on("player-sell-item", async (input) => {
       const p = input.player;
-      const i = await app.services.items.getItem(input.item);
+      const i = await app.services.item.getItem(input.item);
 
       let status = "";
 

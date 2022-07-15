@@ -13,6 +13,7 @@ class InventoryService {
         const data = {
           id: result.id,
           itmId: result.item,
+          name: result.name,
           region: result.region,
           shop: result.shop,
           type: result.type,
@@ -104,6 +105,7 @@ class InventoryService {
         const data = {
           id: result.id,
           item: result.item,
+          name: result.name,
           qty: result.qty,
           equipped: result.equipped,
           identified: result.identified,
@@ -133,28 +135,15 @@ class InventoryService {
 
   async add(item, pid) {
     let query = "";
-    let results;
-    const json = JSON.parse(item.func.replaceAll("&quot;", '"'));
-    if (json.action === "armor" || json.action === "weapon") {
-      query =
-        "INSERT INTO player_items SET item = ?, player = ?, qty = ?, equipped = ?, identified = ?, abilities = ?, guts = ?, wits = ?, charm = ?, attack = ?, defend = ?, skill = ?, times_enchanted = ?, in_storage = ?";
-      results = await this.app.db.query(query, [
-        item.id,
-        pid,
-        1,
-        0,
-        item.identified,
-        item.abilities,
-        item.guts,
-        item.wits,
-        item.charm,
-        item.attack,
-        item.defend,
-        item.skill,
-        item.timesEnchanted,
-        item.inStorage,
-      ]);
-    } else {
+    let addToBackpackTotal = true;
+
+    if (
+      item.shop === "gems" ||
+      item.type === "scroll" ||
+      item.type === "battle" ||
+      item.type == "access" ||
+      item.type == "healing"
+    ) {
       const q =
         "SELECT id, qty FROM player_items WHERE player = ? AND item = ?";
       const result = await this.app.db.query(q, [pid, item.id]);
@@ -183,12 +172,40 @@ class InventoryService {
           item.inStorage,
         ]);
       }
+      addToBackpackTotal = false;
+    } else {
+      query =
+        "INSERT INTO player_items SET item = ?, player = ?, qty = ?, equipped = ?, identified = ?, abilities = ?, guts = ?, wits = ?, charm = ?, attack = ?, defend = ?, skill = ?, times_enchanted = ?, in_storage = ?";
+      results = await this.app.db.query(query, [
+        item.id,
+        pid,
+        1,
+        0,
+        item.identified,
+        item.abilities,
+        item.guts,
+        item.wits,
+        item.charm,
+        item.attack,
+        item.defend,
+        item.skill,
+        item.timesEnchanted,
+        item.inStorage,
+      ]);
     }
-    return await this.getPlayer(pid);
+
+    const player = this.app.services.player.getPlayer(pid);
+
+    return {
+      p: player,
+      add: addToBackpackTotal,
+    };
   }
 
   async equip(player, item) {
-    const status = "error";
+    console.log("inventoryService.equip player", player);
+    console.log("inventoryService.equip item", item);
+    let status = "error";
 
     if (!item.equippable) {
       return item.name + " is not equippable!";
@@ -205,9 +222,13 @@ class InventoryService {
       await this.app.db.query(q, [0, oldItem.id]);
     }
 
+    console.log("inventoryService.equip result", result);
+
     if (result.affectedRows) {
       status = "ok";
     }
+
+    return status;
   }
 
   async remove(item) {

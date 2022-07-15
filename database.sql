@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `is_silver` int(1) NOT NULL,
   `is_crystal` int(1) NOT NULL,
   `attributes` varchar(255) NOT NULL,
-  KEY `id` (`id`)
+  PRIMARY KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8;
 
 TRUNCATE TABLE `items`;
@@ -285,12 +285,12 @@ INSERT INTO `items` (`id`, `name`, `region`, `shop`, `type`, `location`, `guts`,
 (167, 'Crystal War Tusk', 'forest', 'weapons', 'weapon', 'left', 0, 19, 0, 21, 18, -9, 0, '', 1, 0, 90, 1500, 0, 1, ''),
 (168, 'Crystal Goblin Pick', 'mounds', 'weapons', 'weapon', 'right', 0, 0, 0, 54, 0, 0, 0, '', 1, 0, 162, 2000, 0, 1, ''),
 (169, 'Crystal Ram\'s Horn', 'mountains', 'weapons', 'weapon', 'left', 0, 0, 0, 21, 39, -24, 0, '', 1, 0, 117, 2500, 0, 1, ''),
-(169, 'Crystal Mystic Staff', 'dungeons', 'weapons', 'weapon', 'both', 0, 25, 0, 75, 75, 75, 0, '',  1, 0, 450, 3000, 0, 1, 'bless,luck'),
-(170, 'Crystal Great Bow', 'docks', 'weapons', 'weapon', 'both', 0, 36, 0, 150, 0, 105, 0, '', 1, 0, 555, 3500, 0, 1, ''),
-(171, 'Crystal Gauntlet', 'brasil', 'weapons', 'weapon', 'left', 0, 36, 0, 75, 30, -15, 0, '', 1, 0, 270, 4000, 0, 1, ''),
-(172, 'Crystal Nunchaku', 'shangala', 'weapons', 'weapon', 'right', 0, 0, 0, 75, 0, 90, 0, '', 1, 0, 315, 4500, 0, 1, ''),
-(173, 'Crystal Jaguar Fang', 'azteca', 'weapons', 'weapon', 'left', 0, 64, 0, 45, 90, -45, 0, '', 1, 0, 270, 5000, 0, 1, ''),
-(174, 'Crystal Swift Boots', 'dragon guard', 'armor', 'armor', 'feet', 0, 16, 0, 0, 54, 150, 0, '', 1, 0, 258, 100, 0, 1, 'bless');
+(170, 'Crystal Mystic Staff', 'dungeons', 'weapons', 'weapon', 'both', 0, 25, 0, 75, 75, 75, 0, '',  1, 0, 450, 3000, 0, 1, 'bless,luck'),
+(171, 'Crystal Great Bow', 'docks', 'weapons', 'weapon', 'both', 0, 36, 0, 150, 0, 105, 0, '', 1, 0, 555, 3500, 0, 1, ''),
+(172, 'Crystal Gauntlet', 'brasil', 'weapons', 'weapon', 'left', 0, 36, 0, 75, 30, -15, 0, '', 1, 0, 270, 4000, 0, 1, ''),
+(173, 'Crystal Nunchaku', 'shangala', 'weapons', 'weapon', 'right', 0, 0, 0, 75, 0, 90, 0, '', 1, 0, 315, 4500, 0, 1, ''),
+(174, 'Crystal Jaguar Fang', 'azteca', 'weapons', 'weapon', 'left', 0, 64, 0, 45, 90, -45, 0, '', 1, 0, 270, 5000, 0, 1, ''),
+(175, 'Crystal Swift Boots', 'dragon guard', 'armor', 'armor', 'feet', 0, 16, 0, 0, 54, 150, 0, '', 1, 0, 258, 100, 0, 1, 'bless');
 
 CREATE TABLE IF NOT EXISTS `monsters` (
   `id` int(2) DEFAULT NULL,
