@@ -1,10 +1,12 @@
 import React from "react";
+import { createRoot } from "react-dom/client";
 import { Socket } from "socket.io-client";
 
 import Template from "../gameTemplate";
 const template = new Template();
 
 import WelcomeScreen from "../components/welcomeScreen";
+import Notification from "../components/toast";
 
 import Region from "./region";
 import StatBar from "./stat-bar";
@@ -85,31 +87,41 @@ class GameScreen extends React.Component<Props, State> {
     this.props.socket.emit("player-update", this.state.Player);
   }
 
+  showNotification(type: string, str: string) {
+    var div = document.createElement("div");
+    div.setAttribute("aria-live", "polite");
+    div.setAttribute("aria-atomic", "true");
+    div.classList.add("bg-dark");
+    div.classList.add("position-relative");
+    document.body.append(div);
+
+    const root = createRoot(div!);
+    root.render(
+      <Notification container={div} message={str} variant={type} show={true} />
+    );
+  }
+
   componentDidMount(): void {
     this.props.socket.on("player-update-response", (data: any) => {
       if (data.status == "ok") {
         if (data.action === "purchased") {
-          template.modal(
-            "shop-success",
-            "Success!",
+          this.showNotification(
+            "success",
             "You have purchased `" + data.item + "`."
           );
         } else if (data.action === "sold") {
-          template.modal(
-            "shop-success",
-            "Success!",
+          this.showNotification(
+            "success",
             "You have sold `" + data.item + "`."
           );
         } else if (data.action === "equipped") {
-          template.modal(
-            "inventory-success",
-            "Success!",
+          this.showNotification(
+            "success",
             "You have equipped `" + data.item + "`."
           );
         } else if (data.action === "identified") {
-          template.modal(
-            "shop-success",
-            "Success!",
+          this.showNotification(
+            "success",
             "You have identified `" + data.item + "`."
           );
         }
@@ -119,7 +131,7 @@ class GameScreen extends React.Component<Props, State> {
           selectedItem: null,
         });
       } else {
-        template.modal("update-error", "Ooops!", data.data);
+        this.showNotification("error", data.data);
       }
     });
 
@@ -210,16 +222,15 @@ class GameScreen extends React.Component<Props, State> {
 
   performTrade() {
     if (this.state.selectedItem === null) {
-      template.modal("shop-error", "Ooops!", "You have not selected an item.");
+      this.showNotification("error", "You have not selected an item.");
       return false;
     }
 
     if (this.state.transactionType === "buy") {
       const cost = this.state.selectedItem.cost;
       if (cost > this.state.Player.cash) {
-        template.modal(
-          "shop-error",
-          "Ooops!",
+        this.showNotification(
+          "error",
           "You do not have enough money for this transaction."
         );
 
@@ -229,7 +240,6 @@ class GameScreen extends React.Component<Props, State> {
 
         return false;
       } else {
-        console.log("performTrade this.selectedItem", this.selectedItem);
         this.props.socket.emit("player-buy-item", {
           player: this.state.Player,
           item: this.state.selectedItem.id,
@@ -282,11 +292,7 @@ class GameScreen extends React.Component<Props, State> {
 
   inventoryItemUse() {
     if (this.state.selectedItem === null) {
-      template.modal(
-        "inventory-error",
-        "Ooops!",
-        "You have not selected an item."
-      );
+      this.showNotification("error", "You have not selected an item.");
       return false;
     }
 
@@ -306,22 +312,14 @@ class GameScreen extends React.Component<Props, State> {
 
   inventoryItemInfo() {
     if (this.state.selectedItem === null) {
-      template.modal(
-        "inventory-error",
-        "Ooops!",
-        "You have not selected an item."
-      );
+      this.showNotification("error", "You have not selected an item.");
       return false;
     }
   }
 
   inventoryDump() {
     if (this.state.selectedItem === null) {
-      template.modal(
-        "inventory-error",
-        "Ooops!",
-        "You have not selected an item."
-      );
+      this.showNotification("error", "You have not selected an item.");
       return false;
     }
   }

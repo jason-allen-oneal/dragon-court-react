@@ -90,10 +90,8 @@ class UserService {
   }
 
   async getUser(id) {
-    console.log("id", id);
     const query = "SELECT * FROM users WHERE id = ?";
     const results = await this.core.db.query(query, [id]);
-    console.log("results", results);
     return {
       id: results[0].id,
       name: results[0].name,

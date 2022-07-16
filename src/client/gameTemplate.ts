@@ -13,7 +13,9 @@ export default class Template {
   modalClose(id: string) {
     const modalEl = document.getElementById("modal-" + id);
     const modal = bootstrap.Modal.getInstance(modalEl);
-    modal.dispose();
+    if (modal !== null) {
+      modal.dispose();
+    }
   }
 
   createElementFromHTML(htmlString: string) {

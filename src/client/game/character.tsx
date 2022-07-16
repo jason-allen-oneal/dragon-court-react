@@ -130,46 +130,66 @@ export default class Character extends React.Component<Props, State> {
             <Row>
               <Col>
                 <Row>
-                  <Col>
+                  <Col
+                    onClick={() =>
+                      this.props.itemClick(this.state.Player.equipment.head)
+                    }
+                  >
                     H:
                     {Object.keys(this.state.Player.equipment.head).length !==
-                      0 && `${this.state.Player.equipment.head}`}
+                      0 && `${this.state.Player.equipment.head.name}`}
                     {Object.keys(this.state.Player.equipment.head).length ===
                       0 && `None`}
                   </Col>
                 </Row>
                 <Row>
-                  <Col>
+                  <Col
+                    onClick={() =>
+                      this.props.itemClick(this.state.Player.equipment.body)
+                    }
+                  >
                     B:{" "}
                     {Object.keys(this.state.Player.equipment.body).length !==
-                      0 && `${this.state.Player.equipment.body}`}
+                      0 && `${this.state.Player.equipment.body.name}`}
                     {Object.keys(this.state.Player.equipment.body).length ===
                       0 && `None`}
                   </Col>
                 </Row>
                 <Row>
-                  <Col>
+                  <Col
+                    onClick={() =>
+                      this.props.itemClick(this.state.Player.equipment.feet)
+                    }
+                  >
                     F:{" "}
                     {Object.keys(this.state.Player.equipment.feet).length !==
-                      0 && `${this.state.Player.equipment.feet}`}
+                      0 && `${this.state.Player.equipment.feet.name}`}
                     {Object.keys(this.state.Player.equipment.feet).length ===
                       0 && `None`}
                   </Col>
                 </Row>
                 <Row>
-                  <Col>
+                  <Col
+                    onClick={() =>
+                      this.props.itemClick(this.state.Player.equipment.right)
+                    }
+                  >
                     R:{" "}
                     {Object.keys(this.state.Player.equipment.right).length !==
-                      0 && `${this.state.Player.equipment.right}`}
+                      0 && `${this.state.Player.equipment.right.name}`}
                     {Object.keys(this.state.Player.equipment.right).length ===
                       0 && `None`}
                   </Col>
                 </Row>
                 <Row>
-                  <Col>
+                  <Col
+                    onClick={() =>
+                      this.props.itemClick(this.state.Player.equipment.left)
+                    }
+                  >
                     L:{" "}
                     {Object.keys(this.state.Player.equipment.left).length !==
-                      0 && `${this.state.Player.equipment.left}`}
+                      0 && `${this.state.Player.equipment.left.name}`}
                     {Object.keys(this.state.Player.equipment.left).length ===
                       0 && `None`}
                   </Col>

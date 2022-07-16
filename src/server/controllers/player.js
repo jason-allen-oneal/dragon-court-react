@@ -19,32 +19,38 @@ class PlayerController {
     });
 
     socket.on("player-update", async (input) => {
-      console.log(input);
+      console.log("player-update", input);
     });
 
     socket.on("player-equip-item", async (input) => {
-      console.log("player-equip-item input", input);
       const p = input.player;
-      const i = await app.services.inventory.getItem(input.item);
-      console.log("player-equip-item item", i);
+      const i = await app.services.inventory.getItem(p.id, input.item);
+
       let status = "";
       let results;
 
       const result = await app.services.inventory.equip(p, i);
-      console.log(result);
-      if (result === "ok") {
+
+      if (result.status === "ok") {
         status = "ok";
+        if (result.reduce === true) {
+          p.backpack = p.backpack - 1;
+          await app.services.player.update(p);
+        }
       } else {
         status = "error";
         results = "Something went wrong.";
       }
+
       if (status === "ok") {
         results = await app.services.player.getPlayer(p.id);
+        results = results.data;
       }
 
       socket.emit("player-update-response", {
         status: status,
         action: "equipped",
+        item: i.name,
         data: results,
       });
     });
@@ -64,14 +70,15 @@ class PlayerController {
           data: result,
         };
       } else {
-        p.cash = parseInt(p.cash - i.cost);
-        p.cashToday = parseInt(p.cashToday - i.cost);
         let result = await app.services.inventory.add(i, p.id);
+        result.p.cash = parseInt(result.p.cash - i.cost);
+        result.p.cashToday = parseInt(result.p.cashToday - i.cost);
+
         if (result.add) {
-          p.backpack = p.backpack + 1;
+          result.p.backpack = result.p.backpack + 1;
         }
 
-        const playerUpdate = await app.services.player.update(p);
+        const playerUpdate = await app.services.player.update(result.p);
         if (playerUpdate.affectedRows) {
           status = "ok";
           result = result.p;

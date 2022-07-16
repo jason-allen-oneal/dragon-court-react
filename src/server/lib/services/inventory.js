@@ -97,33 +97,47 @@ class InventoryService {
     return data;
   }
 
-  async getItem(id) {
-    const query = "SELECT * FROM player_items WHERE id = ?";
-    const results = await this.app.db.query(query, [id]);
+  async getItem(pid, id) {
+    const query =
+      "SELECT i.name, i.region, i.shop, i.guts AS itmGuts, i.wits AS itmWits, i.charm AS itmCharm, i.attack AS itmAttack, i.defend AS itmDefend, i.skill AS itmSkill, i.cost, i.type, i.location, i.func, i.equippable, i.max_enchants, i.lvl, i.is_silver, i.is_crystal, i.attributes, pi.id, pi.item, pi.qty, pi.equipped, pi.identified, pi.abilities, pi.guts, pi.wits, pi.charm, pi.attack, pi.defend, pi.skill, pi.times_enchanted, pi.in_storage, pi.lvl AS itmLvl FROM player_items pi INNER JOIN items i on pi.item = i.id WHERE pi.player = ? AND pi.id = ?";
+    const results = await this.app.db.query(query, [pid, id]);
     const result = await Promise.all(
       results.map((result) => {
         const data = {
           id: result.id,
-          item: result.item,
-          name: result.name,
-          qty: result.qty,
-          equipped: result.equipped,
-          identified: result.identified,
-          abilities: result.abilities,
-          timesEnchanted: result.times_enchanted,
-          inStorage: result.in_storage,
+          itmId: result.item,
           name: result.name,
           region: result.region,
           shop: result.shop,
-          funcs: result.funcs,
-          effects: result.effects,
+          type: result.type,
+          location: result.location,
+          baseGuts: result.itmGuts,
+          baseWits: result.itmWits,
+          baseCharm: result.itmCharm,
+          baseAttack: result.itmAttack,
+          baseDefend: result.itmDefend,
+          baseSkill: result.itmSkill,
           cost: result.cost,
+          func: result.func,
           equippable: result.equippable,
-          level: result.lvl,
           maxEnchants: result.max_enchants,
-          dropRate: result.drop_rate,
           isSilver: result.is_silver,
           isCrystal: result.is_crystal,
+          qty: result.qty,
+          equipped: result.equipped,
+          identified: result.identified,
+          abilities: result.abilites,
+          guts: result.guts,
+          wits: result.wits,
+          charm: result.charm,
+          attack: result.attack,
+          defend: result.defend,
+          skill: result.skill,
+          timesEnchanted: result.times_enchanted,
+          inStorage: result.in_storage,
+          requiredLevel: result.lvl,
+          itemLevel: result.itmLevel,
+          attributes: result.attributes,
         };
 
         return data;
@@ -203,9 +217,8 @@ class InventoryService {
   }
 
   async equip(player, item) {
-    console.log("inventoryService.equip player", player);
-    console.log("inventoryService.equip item", item);
     let status = "error";
+    let reduceBackpackAmount = true;
 
     if (!item.equippable) {
       return item.name + " is not equippable!";
@@ -220,15 +233,17 @@ class InventoryService {
     if (oldItem !== undefined && oldItem !== null) {
       const q = "UPDATE player_items SET equipped = ? WHERE id = ?";
       await this.app.db.query(q, [0, oldItem.id]);
+      reduceBackpackAmount = false;
     }
-
-    console.log("inventoryService.equip result", result);
 
     if (result.affectedRows) {
       status = "ok";
     }
 
-    return status;
+    return {
+      status: status,
+      reduce: reduceBackpackAmount,
+    };
   }
 
   async remove(item) {
