@@ -6,11 +6,7 @@ type Props = {
   exitBuilding: () => void;
 };
 
-type State = {
-  transactionType: string;
-};
-
-export default class ShopExit extends React.Component<Props, State> {
+export default class ShopExit extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }

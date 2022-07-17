@@ -10,8 +10,10 @@
     "preserveConstEnums": true,
     "target": "es5",
     "allowSyntheticDefaultImports": true,
-    "allowJs": true
+    "allowJs": true,
+    "outDir": "./dist",
+    "rootDir": "."
   },
-  "exclude": ["node_modules"],
-  "include": ["src/**/*"]
+  "exclude": ["dist", "node_modules"],
+  "include": ["src"]
 }

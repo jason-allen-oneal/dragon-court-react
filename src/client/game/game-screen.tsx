@@ -5,14 +5,15 @@ import { Socket } from "socket.io-client";
 import Template from "../gameTemplate";
 const template = new Template();
 
-import WelcomeScreen from "../components/welcomeScreen";
+import WelcomeScreen from "./screens/welcomeScreen";
 import Notification from "../components/toast";
+import InfoScreen from "./screens/infoScreen";
 
-import Region from "./region";
-import StatBar from "./stat-bar";
-import Building from "./building";
-import Character from "./character";
-import Encounter from "./encounter";
+import Region from "./screens/region";
+import StatBar from "../components/stat-bar";
+import Building from "./screens/building";
+import Character from "./screens/character";
+import Encounter from "./screens/encounter";
 
 type Props = {
   User: DC.User;
@@ -35,6 +36,8 @@ type State = {
   transactionType: string;
   selectedItem: DC.InventoryItem | DC.Item | null;
   inWelcome: boolean;
+  inInfoScreen: boolean;
+  lastDumped: DC.InventoryItem | null;
 };
 
 class GameScreen extends React.Component<Props, State> {
@@ -45,7 +48,6 @@ class GameScreen extends React.Component<Props, State> {
 
     this.regionChange = this.regionChange.bind(this);
     this.enterBuilding = this.enterBuilding.bind(this);
-    this.exitBuilding = this.exitBuilding.bind(this);
     this.performQuest = this.performQuest.bind(this);
     this.characterPage = this.characterPage.bind(this);
     this.goAdventuring = this.goAdventuring.bind(this);
@@ -59,9 +61,12 @@ class GameScreen extends React.Component<Props, State> {
     this.transactionTypeChange = this.transactionTypeChange.bind(this);
     this.performTrade = this.performTrade.bind(this);
     this.update = this.update.bind(this);
-    this.exitCharacter = this.exitCharacter.bind(this);
+    this.exitScreen = this.exitScreen.bind(this);
     this.inventoryItemUse = this.inventoryItemUse.bind(this);
     this.inventoryItemInfo = this.inventoryItemInfo.bind(this);
+    this.inventoryDump = this.inventoryDump.bind(this);
+    this.inventoryRecover = this.inventoryRecover.bind(this);
+    this.inventoryPeer = this.inventoryPeer.bind(this);
 
     const p = this.props.Player;
     p.nameAndRank = this.props.Player.rankString + " " + this.props.User.name;
@@ -78,6 +83,8 @@ class GameScreen extends React.Component<Props, State> {
       transactionType: "buy",
       selectedItem: null,
       inWelcome: true,
+      inInfoScreen: false,
+      lastDumped: null,
     };
 
     this.selectedItem = null;
@@ -195,14 +202,6 @@ class GameScreen extends React.Component<Props, State> {
     this.update();
   }
 
-  exitBuilding() {
-    this.setState({
-      inBuilding: false,
-      building: "",
-    });
-    this.update();
-  }
-
   transactionTypeChange(event: any) {
     event.preventDefault();
     this.setState({
@@ -283,10 +282,21 @@ class GameScreen extends React.Component<Props, State> {
     this.props.socket.emit("quest-init", { region: region });
   }
 
-  exitCharacter() {
-    this.setState({
-      inCharacterPage: false,
-    });
+  exitScreen(type: string) {
+    if (type === "character") {
+      this.setState({
+        inCharacterPage: false,
+      });
+    } else if (type === "info") {
+      this.setState({
+        inInfoScreen: false,
+      });
+    } else if (type === "building") {
+      this.setState({
+        inBuilding: false,
+        building: "",
+      });
+    }
     this.update();
   }
 
@@ -315,12 +325,20 @@ class GameScreen extends React.Component<Props, State> {
       this.showNotification("error", "You have not selected an item.");
       return false;
     }
+
+    if (this.state.selectedItem.identified) {
+    } else {
+    }
   }
 
   inventoryDump() {
     if (this.state.selectedItem === null) {
       this.showNotification("error", "You have not selected an item.");
       return false;
+    }
+
+    if (this.state.selectedItem.equipped) {
+    } else {
     }
   }
 
@@ -377,7 +395,7 @@ class GameScreen extends React.Component<Props, State> {
             User={this.state.User}
             Player={this.state.Player}
             socket={this.props.socket}
-            exitBuilding={this.exitBuilding}
+            exitScreen={this.exitScreen}
             performQuest={this.performQuest}
             itemClick={this.itemClick}
             selectedItem={this.state.selectedItem}
@@ -400,7 +418,7 @@ class GameScreen extends React.Component<Props, State> {
             User={this.props.User}
             itemClick={this.itemClick}
             selectedItem={this.state.selectedItem}
-            exitScreen={this.exitCharacter}
+            exitScreen={this.exitScreen}
             inventoryItemUse={this.inventoryItemUse}
             inventoryItemInfo={this.inventoryItemInfo}
             inventoryDump={this.inventoryDump}
@@ -408,12 +426,20 @@ class GameScreen extends React.Component<Props, State> {
             inventoryPeer={this.inventoryPeer}
           />
         );
+      } else if (this.state.inInfoScreen) {
+        return (
+          <InfoScreen
+            data={this.state.selectedItem}
+            exitScreen={this.exitScreen}
+          />
+        );
       } else if (this.state.inEncounter) {
         return <Encounter creature={this.state.creature} />;
       } else if (
         !this.state.inBuilding &&
         !this.state.inEncounter &&
-        !this.state.inCharacterPage
+        !this.state.inCharacterPage &&
+        !this.state.inInfoScreen
       ) {
         return (
           <Region

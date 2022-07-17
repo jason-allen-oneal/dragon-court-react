@@ -8,8 +8,6 @@ import Col from "react-bootstrap/Col";
 
 import Display from "./game/display";
 
-import "./css/game.css";
-
 class Game extends React.Component<any, any> {
   constructor(props: any) {
     super(props);

@@ -110,6 +110,7 @@ declare global {
       name: string;
       region: string;
       identified?: number;
+      equipped?: number;
       shop: string;
       type: string;
       location: string;
