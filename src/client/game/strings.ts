@@ -694,7 +694,7 @@ const strings = {
       suite:
         "feeling like a million marks. You rub your eyes, stretch, and head down to break your fast.",
     },
-    stipend: "You receive {0} marks as stipend from your family's lands.",
+    stipend: "You receive %s marks as stipend from your family's lands.",
   },
   shops: {
     court: [
@@ -792,8 +792,8 @@ const strings = {
   },
   encounter: {
     main: [
-      "While trekking through the {0}, you come across a {1} heading right for you.",
-      "You are hunting a rabbit through the {0} when you come across a {1}.",
+      "While trekking through the %s, you come across a %s heading right for you.",
+      "You are hunting a rabbit through the %s when you come across a %s.",
     ],
     attack: [
       "Attack yon Beastie",

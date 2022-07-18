@@ -7,6 +7,8 @@ import Button from "react-bootstrap/Button";
 import Template from "../../gameTemplate";
 const template = new Template();
 
+import EncounterOption from "../../components/encounterOption";
+
 import "../../css/encounter.css";
 
 type Props = {
@@ -42,26 +44,28 @@ export default class Encounter extends React.Component<Props, State> {
 
   flee() {}
 
+  option() {}
+
   getOptions() {
     const options = [];
     if (this.state.creature.options !== "") {
       if (this.state.creature.options.includes("Trade")) {
-        options.push(<Button onClick={() => this.trade()}>Trade</Button>);
+        options.push(template.getEncounterOption("Trade"));
       }
       if (this.state.creature.options.includes("Pay")) {
-        options.push(<Button onClick={() => this.pay()}>Pay</Button>);
+        options.push(template.getEncounterOption("Pay"));
       }
       if (this.state.creature.options.includes("Help")) {
-        options.push(<Button onClick={() => this.help()}>Help</Button>);
+        options.push(template.getEncounterOption("Help"));
       }
       if (this.state.creature.options.includes("Feed")) {
-        options.push(<Button onClick={() => this.feed()}>Feed</Button>);
+        options.push(template.getEncounterOption("Feed"));
       }
       if (this.state.creature.options.includes("Answer")) {
-        options.push(<Button onClick={() => this.answer()}>Answer</Button>);
+        options.push(template.getEncounterOption("Answer"));
       }
       if (this.state.creature.options.includes("Seduce")) {
-        options.push(<Button onClick={() => this.seduce()}>Seduce</Button>);
+        options.push(template.getEncounterOption("Seduce"));
       }
     }
     return options;
@@ -69,7 +73,9 @@ export default class Encounter extends React.Component<Props, State> {
 
   render(): React.ReactNode {
     const options = this.getOptions();
+    console.log(options);
     const { main, attack, flee } = template.encounterBlurb();
+
     const blurb = template.format(main, [
       this.state.creature.region,
       this.state.creature.name,
@@ -77,6 +83,8 @@ export default class Encounter extends React.Component<Props, State> {
     const creatureNameLower = this.state.creature.name.toLowerCase();
     const creatureImageSlug = creatureNameLower.replace(" ", "_");
     const image = "/images/game/monsters/" + creatureImageSlug + ".jpg";
+    let i = 1;
+
     return (
       <div className="encounter">
         <Row>
@@ -87,7 +95,7 @@ export default class Encounter extends React.Component<Props, State> {
         </Row>
         <Row>
           <Col className="col-4">
-            <img src={image} />
+            <img src={image} className="fluid" />
           </Col>
           <Col className="col-8 text-center">
             <Row>
@@ -107,28 +115,40 @@ export default class Encounter extends React.Component<Props, State> {
               </Col>
             </Row>
             <Row>
-              <Col className="col-12 text-center">&nbsp;</Col>
+              <Col>&nbsp;</Col>
             </Row>
             <Row>
               <Col className="col-12 text-center">
-                <Button onClick={() => this.attack()}>{attack}</Button>
+                <Button size="sm" onClick={() => this.attack()}>
+                  {attack}
+                </Button>
               </Col>
             </Row>
             <Row>
+              <Col>&nbsp;</Col>
+            </Row>
+            <Row>
               <Col className="col-12 text-center">
-                <Button onClick={() => this.flee()}>{flee}</Button>
+                <Button size="sm" onClick={() => this.flee()}>
+                  {flee}
+                </Button>
               </Col>
             </Row>
             {options.length > 0 &&
               options.map((option: any) => (
-                <Row>
-                  <Col className="col-12 text-center">{option}</Col>
-                </Row>
+                <EncounterOption
+                  key={option}
+                  option={option}
+                  onClick={() => this.option()}
+                />
               ))}
           </Col>
         </Row>
         <Row>
-          <Col className="col-12">
+          <Col>&nbsp;</Col>
+        </Row>
+        <Row>
+          <Col className="col-12 text-center">
             <p>{blurb}</p>
           </Col>
         </Row>

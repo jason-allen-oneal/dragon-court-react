@@ -29,7 +29,7 @@ export default class PlayerItems extends React.Component<Props, State> {
 
   render(): React.ReactNode {
     return (
-      <Table className="characterItems" striped hover>
+      <Table className="inventoryItems" striped hover>
         <thead>
           <tr>
             <th>Name</th>

@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-import "../../css/welcomeScreen.css";
+import "../../css/welcome.css";
 
 type Props = {
   goAdventuring: () => void;

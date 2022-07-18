@@ -11,12 +11,38 @@ type Props = {
   User: DC.User;
   Player: DC.Player;
   exitGame: () => void;
-  characterPage: () => void;
+  inventory: () => void;
 };
 
 class StatBar extends React.Component<Props, any> {
   constructor(props: Props) {
     super(props);
+  }
+
+  getWeaponString() {
+    let weaponString = "";
+    if (Object.keys(this.props.Player.equipment.right).length === 0) {
+      if (Object.keys(this.props.Player.equipment.left).length === 0) {
+        weaponString = "None";
+      } else {
+        weaponString = this.props.Player.equipment.left.name;
+      }
+    } else {
+      weaponString = this.props.Player.equipment.right.name;
+    }
+
+    return weaponString;
+  }
+
+  getArmorString() {
+    let armorString = "";
+    if (Object.keys(this.props.Player.equipment.right).length === 0) {
+      armorString = "None";
+    } else {
+      armorString = this.props.Player.equipment.body.name;
+    }
+
+    return armorString;
   }
 
   render(): React.ReactNode {
@@ -36,18 +62,9 @@ class StatBar extends React.Component<Props, any> {
       this.props.Player.stats.charm < this.props.Player.stats.charmMax
         ? `${this.props.Player.stats.charm}/${this.props.Player.stats.charmMax}`
         : this.props.Player.stats.charm;
-    const weaponString =
-      this.props.Player.equipment.right === undefined
-        ? this.props.Player.equipment.left === undefined
-          ? "None"
-          : this.props.Player.equipment.left.name
-        : this.props.Player.equipment.right.name;
-    const armorString =
-      this.props.Player.equipment.body === undefined
-        ? "None"
-        : this.props.Player.equipment.body.name;
-    console.log(this.props.Player.equipment.body);
-    const weaponAndArmor = weaponString + " & " + armorString;
+
+    const weaponAndArmor =
+      this.getWeaponString() + " & " + this.getArmorString();
 
     return (
       <div>
@@ -78,7 +95,7 @@ class StatBar extends React.Component<Props, any> {
               <Button
                 className="character-button"
                 variant="dark"
-                onClick={this.props.characterPage}
+                onClick={this.props.inventory}
               >
                 <img src={"/images/dragon-head-small.png"} />
               </Button>
@@ -111,7 +128,7 @@ class StatBar extends React.Component<Props, any> {
               <Button
                 className="character-button"
                 variant="dark"
-                onClick={this.props.characterPage}
+                onClick={this.props.inventory}
               >
                 <img src={"/images/dragon-head-small.png"} />
               </Button>

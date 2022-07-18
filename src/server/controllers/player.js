@@ -19,7 +19,9 @@ class PlayerController {
     });
 
     socket.on("player-update", async (input) => {
-      console.log("player-update", input);
+      const result = await app.services.player.update(input);
+
+      socket.emit("player-update-response", result);
     });
 
     socket.on("player-equip-item", async (input) => {

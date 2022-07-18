@@ -100,6 +100,20 @@ export default class Template {
     return { main, attack, flee };
   }
 
+  getEncounterOption(option: string) {
+    option = option.toLowerCase() as string;
+
+    return this.strings.encounter[
+      option as keyof typeof this.strings.encounter
+    ][
+      Math.floor(
+        Math.random() *
+          this.strings.encounter[option as keyof typeof this.strings.encounter]
+            .length
+      )
+    ];
+  }
+
   shopBlurb(shop: string) {
     return this.strings.shops[shop as keyof typeof this.strings.shops][
       Math.floor(

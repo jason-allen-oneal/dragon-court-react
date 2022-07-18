@@ -5,13 +5,14 @@ import { Socket } from "socket.io-client";
 import Template from "../gameTemplate";
 const template = new Template();
 
-import WelcomeScreen from "./screens/welcomeScreen";
+import WelcomeScreen from "./screens/welcome";
 import Notification from "../components/toast";
 import InfoScreen from "./screens/infoScreen";
 
 import Region from "./screens/region";
 import StatBar from "../components/stat-bar";
 import Building from "./screens/building";
+import Inventory from "./screens/inventory";
 import Character from "./screens/character";
 import Encounter from "./screens/encounter";
 
@@ -27,17 +28,18 @@ type Props = {
 type State = {
   User: DC.User;
   Player: DC.Player;
+  inWelcome: boolean;
+  inInfo: boolean;
   inBuilding: boolean;
   building: string;
-  inCharacterPage: boolean;
+  inInventory: boolean;
+  inCharacter: boolean;
   inEncounter: boolean;
   creature: DC.Creature | null;
   firstPlay: boolean;
   transactionType: string;
   selectedItem: DC.InventoryItem | DC.Item | null;
-  inWelcome: boolean;
-  inInfoScreen: boolean;
-  lastDumped: DC.InventoryItem | null;
+  lastDumped: DC.InventoryItem | DC.Item | null;
 };
 
 class GameScreen extends React.Component<Props, State> {
@@ -49,7 +51,8 @@ class GameScreen extends React.Component<Props, State> {
     this.regionChange = this.regionChange.bind(this);
     this.enterBuilding = this.enterBuilding.bind(this);
     this.performQuest = this.performQuest.bind(this);
-    this.characterPage = this.characterPage.bind(this);
+    this.inventoryScreen = this.inventoryScreen.bind(this);
+    this.characterScreen = this.characterScreen.bind(this);
     this.goAdventuring = this.goAdventuring.bind(this);
     this.itemClick = this.itemClick.bind(this);
     this.polish = this.polish.bind(this);
@@ -66,7 +69,6 @@ class GameScreen extends React.Component<Props, State> {
     this.inventoryItemInfo = this.inventoryItemInfo.bind(this);
     this.inventoryDump = this.inventoryDump.bind(this);
     this.inventoryRecover = this.inventoryRecover.bind(this);
-    this.inventoryPeer = this.inventoryPeer.bind(this);
 
     const p = this.props.Player;
     p.nameAndRank = this.props.Player.rankString + " " + this.props.User.name;
@@ -74,7 +76,8 @@ class GameScreen extends React.Component<Props, State> {
     this.state = {
       inBuilding: false,
       building: "",
-      inCharacterPage: false,
+      inInventory: false,
+      inCharacter: false,
       inEncounter: false,
       creature: null,
       User: this.props.User,
@@ -83,7 +86,7 @@ class GameScreen extends React.Component<Props, State> {
       transactionType: "buy",
       selectedItem: null,
       inWelcome: true,
-      inInfoScreen: false,
+      inInfo: false,
       lastDumped: null,
     };
 
@@ -111,31 +114,40 @@ class GameScreen extends React.Component<Props, State> {
   componentDidMount(): void {
     this.props.socket.on("player-update-response", (data: any) => {
       if (data.status == "ok") {
-        if (data.action === "purchased") {
-          this.showNotification(
-            "success",
-            "You have purchased `" + data.item + "`."
-          );
-        } else if (data.action === "sold") {
-          this.showNotification(
-            "success",
-            "You have sold `" + data.item + "`."
-          );
-        } else if (data.action === "equipped") {
-          this.showNotification(
-            "success",
-            "You have equipped `" + data.item + "`."
-          );
-        } else if (data.action === "identified") {
-          this.showNotification(
-            "success",
-            "You have identified `" + data.item + "`."
-          );
-        }
+        if (
+          data.action === "purchased" ||
+          data.action === "sold" ||
+          data.action === "equipped" ||
+          data.action === "identified"
+        ) {
+          if (data.action === "purchased") {
+            this.showNotification(
+              "success",
+              "You have purchased `" + data.item + "`."
+            );
+          } else if (data.action === "sold") {
+            this.showNotification(
+              "success",
+              "You have sold `" + data.item + "`."
+            );
+          } else if (data.action === "equipped") {
+            this.showNotification(
+              "success",
+              "You have equipped `" + data.item + "`."
+            );
+          } else if (data.action === "identified") {
+            this.showNotification(
+              "success",
+              "You have identified `" + data.item + "`."
+            );
+          }
 
+          this.setState({
+            selectedItem: null,
+          });
+        }
         this.setState({
           Player: data.data,
-          selectedItem: null,
         });
       } else {
         this.showNotification("error", data.data);
@@ -150,11 +162,17 @@ class GameScreen extends React.Component<Props, State> {
     });
   }
 
-  characterPage() {
+  inventoryScreen() {
     this.setState({
-      inCharacterPage: true,
+      inInventory: true,
     });
     this.update();
+  }
+
+  characterScreen() {
+    this.setState({
+      inCharacter: true,
+    });
   }
 
   regionChange(region: string) {
@@ -285,16 +303,20 @@ class GameScreen extends React.Component<Props, State> {
   exitScreen(type: string) {
     if (type === "character") {
       this.setState({
-        inCharacterPage: false,
+        inCharacter: false,
       });
     } else if (type === "info") {
       this.setState({
-        inInfoScreen: false,
+        inInfo: false,
       });
     } else if (type === "building") {
       this.setState({
         inBuilding: false,
         building: "",
+      });
+    } else if (type === "inventory") {
+      this.setState({
+        inInventory: false,
       });
     }
     this.update();
@@ -326,9 +348,9 @@ class GameScreen extends React.Component<Props, State> {
       return false;
     }
 
-    if (this.state.selectedItem.identified) {
-    } else {
-    }
+    this.setState({
+      inInfo: true,
+    });
   }
 
   inventoryDump() {
@@ -337,14 +359,12 @@ class GameScreen extends React.Component<Props, State> {
       return false;
     }
 
-    if (this.state.selectedItem.equipped) {
-    } else {
-    }
+    this.setState({
+      lastDumped: this.state.selectedItem,
+    });
   }
 
   inventoryRecover() {}
-
-  inventoryPeer() {}
 
   goAdventuring() {
     const user = this.state.User;
@@ -367,7 +387,7 @@ class GameScreen extends React.Component<Props, State> {
         Player={this.state.Player}
         User={this.state.User}
         exitGame={this.props.exitGame}
-        characterPage={this.characterPage}
+        inventory={this.inventoryScreen}
       />
     );
   }
@@ -411,9 +431,24 @@ class GameScreen extends React.Component<Props, State> {
             tithe={this.tithe}
           />
         );
-      } else if (this.state.inCharacterPage) {
+      } else if (this.state.inInfo) {
+        return (
+          <InfoScreen
+            data={this.state.selectedItem}
+            exitScreen={this.exitScreen}
+          />
+        );
+      } else if (this.state.inCharacter) {
         return (
           <Character
+            Player={this.state.Player}
+            User={this.state.User}
+            exitScreen={this.exitScreen}
+          />
+        );
+      } else if (this.state.inInventory) {
+        return (
+          <Inventory
             Player={this.props.Player}
             User={this.props.User}
             itemClick={this.itemClick}
@@ -423,24 +458,12 @@ class GameScreen extends React.Component<Props, State> {
             inventoryItemInfo={this.inventoryItemInfo}
             inventoryDump={this.inventoryDump}
             inventoryRecover={this.inventoryRecover}
-            inventoryPeer={this.inventoryPeer}
-          />
-        );
-      } else if (this.state.inInfoScreen) {
-        return (
-          <InfoScreen
-            data={this.state.selectedItem}
-            exitScreen={this.exitScreen}
+            peer={this.characterScreen}
           />
         );
       } else if (this.state.inEncounter) {
         return <Encounter creature={this.state.creature} />;
-      } else if (
-        !this.state.inBuilding &&
-        !this.state.inEncounter &&
-        !this.state.inCharacterPage &&
-        !this.state.inInfoScreen
-      ) {
+      } else {
         return (
           <Region
             Player={this.props.Player}
@@ -459,7 +482,6 @@ class GameScreen extends React.Component<Props, State> {
   render(): React.ReactNode {
     const screenSize = {
       height: "22em",
-      width: "70%",
       marginTop: "1.2em",
       marginRight: "1.2em",
       border: "1px solid black",

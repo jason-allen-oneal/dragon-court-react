@@ -21208,28 +21208,38 @@
 	    function Template() {
 	    }
 	    Template.prototype.modalClose = function (id) {
-	        var modalEl = document.getElementById('modal-' + id);
+	        var modalEl = document.getElementById("modal-" + id);
 	        var modal = Modal.getInstance(modalEl);
-	        modal.hide();
+	        modal.dispose();
 	    };
 	    Template.prototype.createElementFromHTML = function (htmlString) {
-	        var div = document.createElement('div');
+	        var div = document.createElement("div");
 	        div.innerHTML = htmlString.trim();
 	        return div.firstElementChild;
 	    };
 	    Template.prototype.modal = function (id, title, content, cb, size) {
 	        var _this = this;
-	        var html = '<div id="modal-' + id + '" class="modal" tabindex="-1"><div class="modal-dialog ' + size + '"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">' + title + '</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">' + content + '</div></div></div></div>';
-	        document.body.insertAdjacentElement('beforeend', this.createElementFromHTML(html));
-	        var modal = new Modal(document.getElementById('modal-' + id), { keyboard: false });
+	        var html = '<div id="modal-' +
+	            id +
+	            '" class="modal" tabindex="-1"><div class="modal-dialog ' +
+	            size +
+	            '"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">' +
+	            title +
+	            '</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">' +
+	            content +
+	            "</div></div></div></div>";
+	        document.body.insertAdjacentElement("beforeend", this.createElementFromHTML(html));
+	        var modal = new Modal(document.getElementById("modal-" + id), {
+	            keyboard: false,
+	        });
 	        modal.show();
-	        var rootElement = document.querySelector('body');
-	        rootElement.addEventListener('hidden.bs.modal', function (evt) {
+	        var rootElement = document.querySelector("body");
+	        rootElement.addEventListener("hidden.bs.modal", function (evt) {
 	            var targetElement = evt.target;
 	            while (targetElement != null) {
-	                if (targetElement.matches('#modal-' + id)) {
+	                if (targetElement.matches("#modal-" + id)) {
 	                    _this.modalClose(id);
-	                    if (cb !== null) {
+	                    if (cb !== null && cb != undefined) {
 	                        cb();
 	                    }
 	                }
@@ -21238,12 +21248,13 @@
 	        }, true);
 	    };
 	    Template.prototype.fbInit = function () {
-	        var js, fjs = document.getElementsByTagName('script')[0];
-	        if (document.getElementById('facebook-jssdk'))
+	        var js, fjs = document.getElementsByTagName("script")[0];
+	        if (document.getElementById("facebook-jssdk"))
 	            return;
-	        js = document.createElement('script');
-	        js.id = 'facebook-jssdk';
-	        js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&autoLogAppEvents=1&version=v2.12&appId=199922540602335';
+	        js = document.createElement("script");
+	        js.id = "facebook-jssdk";
+	        js.src =
+	            "https://connect.facebook.net/en_US/sdk.js#xfbml=1&autoLogAppEvents=1&version=v2.12&appId=199922540602335";
 	        fjs.parentNode.insertBefore(js, fjs);
 	    };
 	    return Template;

@@ -1,10 +1,5 @@
-.character-item-table-container {
-  height: 8em;
-  max-height: 8em;
-  overflow-y: scroll;
-}
-
-table.characterItems {
-  height: 8em;
-  color: #000000 !important;
+.characterScreen {
+  background-color: #2d31ff;
+  height: 22em;
+  padding: 1.6em;
 }

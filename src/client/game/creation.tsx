@@ -10,7 +10,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-import "../../css/creation.css";
+import "../css/creation.css";
 
 import CreationRadio from "../components/creationRadio";
 

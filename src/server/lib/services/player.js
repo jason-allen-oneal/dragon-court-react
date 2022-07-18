@@ -178,6 +178,9 @@ class PlayerService {
       obj.totalGuildSkills = totalSkills;
       obj.rankString = this.getRankString(result.rank);
       obj.inventory = await this.app.services.inventory.getInventory(id);
+      obj.alliance = await this.app.services.alliance.getAlliance(
+        result.alliance
+      );
 
       let guts = 0,
         wits = 0,
@@ -218,12 +221,12 @@ class PlayerService {
 
   async update(data) {
     const query =
-      "UPDATE players SET region = ?, class = ?, background = ?, alliance = ?, effects = ?, guts = ?, wits = ?, charm = ?, max_guts = ?, max_wits = ?, max_charm = ?, attack = ?, defend = ?, skill = ?, skill_fighter = ?, skill_fighter_max = ?, skill_magic = ?, skill_magic_max = ?, skill_trade = ?, skill_trade_max = ?, level = ?, experience = ?, quests = ?, max_quests = ?, cash = ?, rank = ?, backpack = ?, max_backpack = ?, fame = ?, favor = ?, skilled = ?, place = ?, location = ?, favor = ? WHERE owner = ?";
-    return await this.app.db.query(query, [
+      "UPDATE players SET region = ?, class = ?, background = ?, alliance = ?, effects = ?, guts = ?, wits = ?, charm = ?, max_guts = ?, max_wits = ?, max_charm = ?, attack = ?, defend = ?, skill = ?, skill_fighter = ?, skill_fighter_max = ?, skill_magic = ?, skill_magic_max = ?, skill_trade = ?, skill_trade_max = ?, level = ?, experience = ?, quests = ?, max_quests = ?, cash = ?, rank = ?, backpack = ?, max_backpack = ?, fame = ?, favor = ?, skilled = ?, place = ?, location = ?, favor = ? WHERE id = ?";
+    const result = await this.app.db.query(query, [
       data.region,
       data.class,
       data.background,
-      data.alliance,
+      data.alliance.id,
       data.effects,
       data.stats.guts,
       data.stats.wits,
@@ -254,8 +257,20 @@ class PlayerService {
       data.place,
       data.location,
       data.favor,
-      data.owner,
+      data.id,
     ]);
+
+    let status = "error";
+    if (result.affectedRows > 0) {
+      status = "ok";
+    }
+
+    const player = await this.getPlayer(data.id);
+    console.log(player);
+    return {
+      status: status,
+      data: player,
+    };
   }
 }
 

@@ -46,7 +46,7 @@ declare global {
       region: string;
       class: string;
       background: string;
-      alliance: number;
+      alliance: DC.Alliance;
       effects: string[];
       stats: {
         guts: number;
@@ -184,6 +184,17 @@ declare global {
       level: number;
     }
 
+    interface Alliance {
+      id: number;
+      name: string;
+      creator: number | DC.Player;
+      time: number;
+      abilities: string;
+      members: number;
+      membership: number;
+      power: number;
+    }
+
     interface Strings {
       creation: {
         race: string[];
@@ -213,6 +224,17 @@ declare global {
         armor: string[];
         trade: string[];
         smithy: string[];
+      };
+      encounter: {
+        main: string[];
+        attack: string[];
+        flee: string[];
+        feed: string[];
+        help: string[];
+        pay: string[];
+        trade: string[];
+        answer: string[];
+        seduce: string[];
       };
     }
   }

@@ -37,6 +37,7 @@ class Application {
       encounter: require("./services/encounter")(this),
       item: require("./services/item")(this),
       chat: require("./services/chat")(this),
+      alliance: require("./services/alliance")(this),
     };
 
     this.utils = require("./utils")(this);
