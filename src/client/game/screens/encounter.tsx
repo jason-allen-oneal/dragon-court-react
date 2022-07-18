@@ -40,7 +40,9 @@ export default class Encounter extends React.Component<Props, State> {
 
   seduce() {}
 
-  attack() {}
+  attack() {
+    console.log("attack");
+  }
 
   flee() {}
 
