@@ -40,6 +40,7 @@ declare global {
     };
 
     interface Player {
+      id: number;
       owner: number;
       rankString: string;
       nameAndRank: string;

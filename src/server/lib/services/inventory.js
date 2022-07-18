@@ -231,8 +231,7 @@ class InventoryService {
     const result = await this.app.db.query(query, [1, item.id]);
 
     if (oldItem !== undefined && oldItem !== null) {
-      const q = "UPDATE player_items SET equipped = ? WHERE id = ?";
-      await this.app.db.query(q, [0, oldItem.id]);
+      this.unequip(oldItem);
       reduceBackpackAmount = false;
     }
 
@@ -246,9 +245,23 @@ class InventoryService {
     };
   }
 
+  async unequip(item) {
+    const q = "UPDATE player_items SET equipped = ? WHERE id = ?";
+    await this.app.db.query(q, [0, item.id]);
+  }
+
   async remove(item) {
     const query = "DELETE FROM player_items WHERE id = ?";
     return await this.app.db.query(query, [item.id]);
+  }
+
+  async dump(pid, itmId) {
+    const p = await this.app.services.player.getPlayer(pid);
+    const i = await this.getItem(pid, itmId);
+
+    if (i.equipped) {
+    } else {
+    }
   }
 
   async polish(id) {

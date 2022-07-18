@@ -127,6 +127,7 @@ class Application {
     const playerController = require("../controllers/player");
     const encounterController = require("../controllers/encounter");
     const buildingController = require("../controllers/building");
+    const inventoryController = require("../controllers/inventory");
 
     this.io.on("connection", (socket) => {
       this.logger.info("user connected");
@@ -135,6 +136,7 @@ class Application {
       playerController.init(this, socket);
       encounterController.init(this, socket);
       buildingController.init(this, socket);
+      inventoryController.init(this, socket);
     });
 
     this.expressApp.use((req, res, next) => {

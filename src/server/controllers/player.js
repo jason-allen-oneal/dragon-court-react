@@ -13,9 +13,16 @@ class PlayerController {
     });
 
     socket.on("player-get", async (input) => {
+      let data;
       const result = await app.services.player.getPlayer(input.pid);
 
-      socket.emit("player-get-response", result);
+      if (result.status === "ok") {
+        data = result.data;
+      } else {
+        data = false;
+      }
+
+      socket.emit("player-get-response", data);
     });
 
     socket.on("player-update", async (input) => {

@@ -46,6 +46,7 @@ class StatBar extends React.Component<Props, any> {
   }
 
   render(): React.ReactNode {
+    console.log(this.props.Player);
     const quests =
       this.props.Player.quests < this.props.Player.questsMax
         ? `${this.props.Player.quests}/${this.props.Player.questsMax}`

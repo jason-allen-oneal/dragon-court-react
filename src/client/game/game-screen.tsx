@@ -362,6 +362,11 @@ class GameScreen extends React.Component<Props, State> {
     this.setState({
       lastDumped: this.state.selectedItem,
     });
+
+    this.props.socket.emit("inventory-dump", {
+      player: this.state.Player.id,
+      item: this.state.selectedItem.id,
+    });
   }
 
   inventoryRecover() {}

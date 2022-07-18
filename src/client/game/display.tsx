@@ -39,8 +39,9 @@ class Display extends React.Component<Props, State> {
 
   componentDidMount(): void {
     this.props.socket.on("player-get-response", (data) => {
+      console.log("player-get-response", data);
       this.setState({
-        Player: data.data,
+        Player: data,
         playerFetched: true,
       });
     });

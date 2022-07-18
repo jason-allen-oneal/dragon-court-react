@@ -205,6 +205,9 @@ class PlayerService {
       obj.totalAttack = attack;
       obj.totalDefend = defend;
 
+      const u = await this.app.services.user.getUser(obj.owner);
+      obj.nameAndRank = obj.rankString + " " + u.name;
+
       json = {
         status: "ok",
         data: obj,
@@ -266,10 +269,10 @@ class PlayerService {
     }
 
     const player = await this.getPlayer(data.id);
-    console.log(player);
+
     return {
       status: status,
-      data: player,
+      data: player.data,
     };
   }
 }
